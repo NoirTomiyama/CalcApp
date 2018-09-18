@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText editText;
     EditText editText2;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Boolean isValid = true;
 
+        // 空白字のエラー判定
         if(editText.getText().toString().isEmpty()){
             editText.setError("数字を入力してください");
             isValid = false;
@@ -51,8 +51,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isValid = false;
         }
 
-        if(isValid){
+        // 「.」「-」のみの対処
+        if(editText.getText().toString().equals(".") || editText.getText().toString().equals("-")){
+            editText.setError("有効な数字を入力してください");
+            isValid = false;
+        }
 
+        if(editText2.getText().toString().equals(".") || editText2.getText().toString().equals("-")){
+            editText2.setError("有効な数字を入力してください");
+            isValid = false;
+        }
+
+
+        if(isValid){
 
             // editTextの値取得
             BigDecimal value1 = new BigDecimal(editText.getText().toString());
@@ -88,7 +99,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case R.id.button4:
 
+                    if(value2.compareTo(BigDecimal.ZERO) == 0){
+                        editText2.setError("0では除算できません");
+                        break;
+                    }
+
                     result = value1.divide(value2,2, BigDecimal.ROUND_HALF_UP);
+                    result = result.stripTrailingZeros();
                     intent = new Intent(this,ResultActivity.class);
                     intent.putExtra("VALUE",result);
                     startActivity(intent);
